@@ -2,7 +2,6 @@ package com.tusmartcar.jian.tuchat;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -16,19 +15,19 @@ import android.os.Message;
  */
 public class SimpleSocket extends Thread
 {
-    public Handler sendHandler = null;                      //UI线程通过此发送消息
+    public Handler mHandler = null;                      //UI线程通过此发送消息
     private String serviceIP = "192.168.43.231";
     private int servicePort = 38282;
     private int bufferLen = 1024;
-    private Handler mHandler = null;
+    private Handler revHandler = null;
     BufferedReader bufferedReader = null;
     private BufferedWriter bufferedWriter = null;
     Socket socket;
 
-    public SimpleSocket(Handler mHandler)
+    public SimpleSocket(Handler revHandler)
     {
-        this.mHandler = mHandler;
-        sendHandler = new Handler() {
+        this.revHandler = revHandler;
+        mHandler = new Handler() {
             @Override
             public void handleMessage(Message msg)
             {
@@ -67,10 +66,7 @@ public class SimpleSocket extends Thread
             while (true)
             {
                 String inputStr = bufferedReader.readLine();
-                Message msg = new Message();
-                msg.what = SocketService.SimpleSocket_to_SocketService;
-                msg.obj = inputStr;
-                mHandler.sendMessage(msg);
+                Message.obtain(revHandler, SocketService.SimpleSocket_to_SocketService, inputStr).sendToTarget();
             }
         }
         catch (Exception e)

@@ -41,10 +41,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void handleMessage(Message msg)
             {
-                System.out.println("simpleSocket-->1");
-                mainShowText.setText(mainShowText.getText() + "\n" + (String) (msg.obj));
+                switch (msg.what) {
+                    case SocketService.SocketService_to_MainActiviyt :
+                        mainShowText.setText(mainShowText.getText() + "\n" + (String) (msg.obj));
+                        break;
+                }
                 super.handleMessage(msg);
-                System.out.println("simpleSocket-->2");
             }
         };
         Intent intent = new Intent();

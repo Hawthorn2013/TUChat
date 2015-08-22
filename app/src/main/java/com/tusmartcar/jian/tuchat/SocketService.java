@@ -44,10 +44,7 @@ public class SocketService extends Service {
     class SendDataBinder extends Binder {
         public void SendMsg(String sMsg)
         {
-            Message msg = new Message();
-            msg.what = SocketService_to_SimpleSocket;
-            msg.obj = sMsg;
-            simpleSocket.sendHandler.sendMessage(msg);
+            Message.obtain(simpleSocket.mHandler, SocketService_to_SimpleSocket, sMsg).sendToTarget();
         }
 
         public SocketService GetService()

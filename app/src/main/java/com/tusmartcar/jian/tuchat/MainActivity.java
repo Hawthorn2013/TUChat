@@ -27,7 +27,9 @@ public class MainActivity extends AppCompatActivity {
         MainTextSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainShowText.setText("255");
+                Message msg = new Message();
+                msg.obj = new String("I am Nexus 5.");
+                simpleSocket.sendHandler.sendMessage(msg);
             }
         });
         mHandler = new Handler() {
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
                         MainShowText.setText(MainShowText.getText() + "\n" + (String)(msg.obj));
                         break;
                 }
+                super.handleMessage(msg);
             }
         };
         simpleSocket = new SimpleSocket(mHandler);

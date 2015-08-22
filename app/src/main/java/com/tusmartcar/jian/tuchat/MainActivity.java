@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+    //中文测试
     private TextView MainShowText = null;
     private EditText MainEditText = null;
     private Button MainTextSend = null;

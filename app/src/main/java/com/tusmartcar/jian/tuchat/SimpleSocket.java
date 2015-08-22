@@ -34,21 +34,12 @@ public class SimpleSocket extends Thread
             String outStr = "I am Nexus 5.";
             outputStream.write(outStr.getBytes("UTF-8"));
             outputStream.flush();
-            byte buffer[] = new byte[bufferLen];
             while (true)
             {
-                while (!bufferedReader.ready())
-                {
-                    System.out.println("Unready!");
-                    Thread.sleep(1000);
-                }
-                System.out.println("Read bytes");
                 String inputStr = bufferedReader.readLine();
-                System.out.println("Get it!");
                 Message msg = new Message();
                 msg.what = 1;
                 msg.obj = inputStr;
-                System.out.println("Send a msg.");
                 mHandler.sendMessage(msg);
             }
         }

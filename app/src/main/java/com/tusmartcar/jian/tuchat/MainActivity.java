@@ -34,12 +34,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void handleMessage(Message msg)
             {
-                System.out.println("test2");
                 switch (msg.what)
                 {
                     case 1 :
-                        MainShowText.setText(MainShowText.getText() + (String)(msg.obj));
-                        System.out.println("test4");
+                        MainShowText.setText(MainShowText.getText() + "\n" + (String)(msg.obj));
                         break;
                 }
             }

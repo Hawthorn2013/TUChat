@@ -4,13 +4,28 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-
+    private TextView MainShowText = null;
+    private EditText MainEditText = null;
+    private Button MainTextSend = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        MainShowText = (TextView)findViewById(R.id.MainShowText);
+        MainEditText = (EditText)findViewById(R.id.MainEditText);
+        MainTextSend = (Button)findViewById(R.id.MainTextSend);
+        MainTextSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainShowText.setText("255");
+            }
+        });
     }
 
     @Override

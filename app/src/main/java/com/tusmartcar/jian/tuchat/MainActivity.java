@@ -1,7 +1,7 @@
 package com.tusmartcar.jian.tuchat;
 
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.os.*;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,8 +14,11 @@ public class MainActivity extends AppCompatActivity {
     private TextView MainShowText = null;
     private EditText MainEditText = null;
     private Button MainTextSend = null;
+    private SimpleSocket simpleSocket = null;
+    private Handler mHandler = null;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         MainShowText = (TextView)findViewById(R.id.MainShowText);
@@ -27,6 +30,22 @@ public class MainActivity extends AppCompatActivity {
                 MainShowText.setText("255");
             }
         });
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg)
+            {
+                System.out.println("test2");
+                switch (msg.what)
+                {
+                    case 1 :
+                        MainShowText.setText(MainShowText.getText() + (String)(msg.obj));
+                        System.out.println("test4");
+                        break;
+                }
+            }
+        };
+        simpleSocket = new SimpleSocket(mHandler);
+        simpleSocket.start();
     }
 
     @Override

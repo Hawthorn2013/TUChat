@@ -1,5 +1,8 @@
 package com.tusmartcar.jian.tuchat;
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.support.v7.app.AppCompatActivity;
 import android.os.*;
 import android.view.Menu;
@@ -11,42 +14,55 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     //中文测试
-    private TextView MainShowText = null;
-    private EditText MainEditText = null;
-    private Button MainTextSend = null;
+    private TextView mainShowText = null;
+    private EditText mainEditText = null;
+    private Button mainTextSend = null;
     private SimpleSocket simpleSocket = null;
     private Handler mHandler = null;
+    private SocketService socketService = null;
+    private SocketService.SendDataBinder sendDataBinder = null;
+    private ServiceConnection conn = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        MainShowText = (TextView)findViewById(R.id.MainShowText);
-        MainEditText = (EditText)findViewById(R.id.MainEditText);
-        MainTextSend = (Button)findViewById(R.id.MainTextSend);
-        MainTextSend.setOnClickListener(new View.OnClickListener() {
+        mainShowText = (TextView)findViewById(R.id.MainShowText);
+        mainEditText = (EditText)findViewById(R.id.MainEditText);
+        mainTextSend = (Button)findViewById(R.id.MainTextSend);
+        mainTextSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Message msg = new Message();
-                msg.obj = new String("I am Nexus 5.");
-                simpleSocket.sendHandler.sendMessage(msg);
+                sendDataBinder.SendMsg(new String("I am Nexus 5."));
             }
         });
         mHandler = new Handler() {
             @Override
             public void handleMessage(Message msg)
             {
-                switch (msg.what)
-                {
-                    case 1 :
-                        MainShowText.setText(MainShowText.getText() + "\n" + (String)(msg.obj));
-                        break;
-                }
+                System.out.println("simpleSocket-->1");
+                mainShowText.setText(mainShowText.getText() + "\n" + (String) (msg.obj));
                 super.handleMessage(msg);
+                System.out.println("simpleSocket-->2");
             }
         };
-        simpleSocket = new SimpleSocket(mHandler);
-        simpleSocket.start();
+        Intent intent = new Intent();
+        intent.setClass(MainActivity.this, SocketService.class);
+        conn = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                sendDataBinder = (SocketService.SendDataBinder)service;
+                sendDataBinder.SetMainHandler(mHandler);
+                sendDataBinder.SendMsg(new String("Service Start"));
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        };
+        bindService(intent, conn, BIND_AUTO_CREATE);
     }
 
     @Override

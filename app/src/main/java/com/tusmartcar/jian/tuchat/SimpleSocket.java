@@ -68,7 +68,7 @@ public class SimpleSocket extends Thread
             {
                 String inputStr = bufferedReader.readLine();
                 Message msg = new Message();
-                msg.what = 1;
+                msg.what = SocketService.SimpleSocket_to_SocketService;
                 msg.obj = inputStr;
                 mHandler.sendMessage(msg);
             }

@@ -31,11 +31,9 @@ public class SocketService extends Service {
                             String sMsg = new String((String)( msg.obj));
                             Message.obtain(mainHandler, SocketService_to_MainActiviyt, msg.obj).sendToTarget();
                             try {
-                                System.out.println("test-->5");
                                 bufferedWriter.newLine();
                                 bufferedWriter.write(sMsg);
                                 bufferedWriter.flush();
-                                System.out.println("test-->6");
                             }
                             catch (Exception e)
                             {

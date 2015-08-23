@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
             {
                 switch (msg.what) {
                     case SocketService.SocketService_to_MainActiviyt :
-                        mainShowText.setText((String)(msg.obj) + System.getProperty("line.separator") + mainShowText.getText());
+                        mainShowText.setText(mainShowText.getText() + System.getProperty("line.separator") + (String)(msg.obj));
                         break;
                     case SocketService.ConnectionStatus_Connected :
                         ConnectionStatus.setText("已连接^-^");
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
             String s = null;
             while ((s = bufferedReader.readLine()) != null)
             {
-                mainShowText.setText(s + System.getProperty("line.separator") + mainShowText.getText());
+                mainShowText.setText(mainShowText.getText() + System.getProperty("line.separator") + s);
             }
         }
         catch (Exception e)

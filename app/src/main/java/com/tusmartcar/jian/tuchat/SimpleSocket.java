@@ -15,8 +15,8 @@ import android.os.Message;
  */
 public class SimpleSocket extends Thread
 {
-    public Handler mHandler = null;                      //UI线程通过此发送消息
-    private String serviceIP = "192.168.43.231";
+    public Handler mHandler = null;
+    private String serviceIP = "LITTLECAT-PC2";
     private int servicePort = 38282;
     private int bufferLen = 1024;
     private Handler revHandler = null;
@@ -49,29 +49,36 @@ public class SimpleSocket extends Thread
     @Override
     public void run()
     {
-        try
-        {
-            socket = new Socket(serviceIP, servicePort);
-            OutputStream outputStream = socket.getOutputStream();
-            bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream));
-            InputStream inputStream = socket.getInputStream();
-            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        }
-        catch (Exception e)
-        {
-            System.out.println(e);
-        }
-        try
-        {
-            while (true)
-            {
-                String inputStr = bufferedReader.readLine();
-                Message.obtain(revHandler, SocketService.SimpleSocket_to_SocketService, inputStr).sendToTarget();
+        while (true) {
+            try {
+                socket = new Socket(serviceIP, servicePort);
+                OutputStream outputStream = socket.getOutputStream();
+                bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream));
+                InputStream inputStream = socket.getInputStream();
+                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                try {
+                    while (true) {
+                        String inputStr = bufferedReader.readLine();
+                        Message.obtain(revHandler, SocketService.SimpleSocket_to_SocketService, inputStr).sendToTarget();
+                    }
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+            } catch (Exception e) {
+                System.out.println(e);
             }
-        }
-        catch (Exception e)
-        {
-            System.out.println(e);
+
+            try {
+                bufferedReader.close();
+                bufferedWriter.close();
+                socket.close();
+            } catch (Exception e) {
+                System.out.println(e);
+            } finally {
+                bufferedReader = null;
+                bufferedWriter = null;
+                socket = null;
+            }
         }
     }
 }

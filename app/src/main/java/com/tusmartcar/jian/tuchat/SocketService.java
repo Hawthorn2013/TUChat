@@ -41,8 +41,7 @@ public class SocketService extends Service {
         };
         simpleSocket = new SimpleSocket(mHandler);
         simpleSocket.start();
-        class Breathing extends Thread
-        {
+        new Thread() {
             @Override
             public void run() {
                 while (true) {
@@ -57,9 +56,7 @@ public class SocketService extends Service {
                     }
                 }
             }
-        }
-        Breathing breathing = new Breathing();
-        breathing.start();
+        }.start();
     }
 
     @Override

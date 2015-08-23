@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
                 sendDataBinder.SendMsg(new String("I am Nexus 5."));
             }
         });
+
         ConnectionStatus = (TextView)findViewById(R.id.ConnectionStatus);
         mHandler = new Handler() {
             @Override
@@ -79,11 +80,8 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         bindService(intent, conn, BIND_AUTO_CREATE);
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+        //显示历史消息
         try
         {
             bufferedReader = new BufferedReader(new InputStreamReader(openFileInput(getString(R.string.ChatDataTxt))));
@@ -97,6 +95,19 @@ public class MainActivity extends AppCompatActivity {
         {
             System.out.println(e);
         }
+        finally {
+            try {
+                bufferedReader.close();
+            }
+            catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override

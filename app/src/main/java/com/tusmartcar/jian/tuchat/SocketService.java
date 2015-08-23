@@ -5,7 +5,7 @@ import android.os.*;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.Message;
-
+import android.content.*;
 import java.io.*;
 
 public class SocketService extends Service {
@@ -19,7 +19,7 @@ public class SocketService extends Service {
     private SimpleSocket simpleSocket = null;
     public Handler mHandler = null;
     private Handler mainHandler = null;
-
+    private BufferedWriter bufferedWriter = null;
     public SocketService() {
         mHandler = new Handler() {
             @Override
@@ -28,7 +28,19 @@ public class SocketService extends Service {
                 switch (msg.what) {
                     case SimpleSocket_to_SocketService :
                         if (mainHandler != null) {
+                            String sMsg = new String((String)( msg.obj));
                             Message.obtain(mainHandler, SocketService_to_MainActiviyt, msg.obj).sendToTarget();
+                            try {
+                                System.out.println("test-->5");
+                                bufferedWriter.newLine();
+                                bufferedWriter.write(sMsg);
+                                bufferedWriter.flush();
+                                System.out.println("test-->6");
+                            }
+                            catch (Exception e)
+                            {
+                                System.out.println(e);
+                            }
                         }
                         super.handleMessage(msg);
                         break;
@@ -81,6 +93,31 @@ public class SocketService extends Service {
         public void SetMainHandler(Handler mainHandler)
         {
             SocketService.this.mainHandler = mainHandler;
+        }
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        try {
+            bufferedWriter = new BufferedWriter(new OutputStreamWriter(openFileOutput(getString(R.string.ChatDataTxt), MODE_APPEND)));
+        }
+        catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        try {
+            bufferedWriter.close();
+        }
+        catch (Exception e) {
+            System.out.println(e);
+        }
+        finally {
+            bufferedWriter = null;
         }
     }
 }

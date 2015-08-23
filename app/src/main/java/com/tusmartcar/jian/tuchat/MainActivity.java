@@ -13,6 +13,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
 public class MainActivity extends AppCompatActivity {
     //中文测试
     private TextView mainShowText = null;
@@ -24,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private SocketService.SendDataBinder sendDataBinder = null;
     private ServiceConnection conn = null;
     private TextView ConnectionStatus = null;
+    private BufferedReader bufferedReader = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -46,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
             {
                 switch (msg.what) {
                     case SocketService.SocketService_to_MainActiviyt :
-                        mainShowText.setText((String)(msg.obj) + "\n" + mainShowText.getText());
+                        mainShowText.setText((String)(msg.obj) + System.getProperty("line.separator") + mainShowText.getText());
                         break;
                     case SocketService.ConnectionStatus_Connected :
                         ConnectionStatus.setText("已连接^-^");
@@ -75,6 +79,24 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         bindService(intent, conn, BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try
+        {
+            bufferedReader = new BufferedReader(new InputStreamReader(openFileInput(getString(R.string.ChatDataTxt))));
+            String s = null;
+            while ((s = bufferedReader.readLine()) != null)
+            {
+                mainShowText.setText(s + System.getProperty("line.separator") + mainShowText.getText());
+            }
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
+        }
     }
 
     @Override

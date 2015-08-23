@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.os.Message;
 
+import java.io.*;
+
 public class SocketService extends Service {
     public static final int MainActivity_to_SocketService = 1;
     public static final int SocketService_to_MainActiviyt = 2;

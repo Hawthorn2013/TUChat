@@ -41,6 +41,25 @@ public class SocketService extends Service {
         };
         simpleSocket = new SimpleSocket(mHandler);
         simpleSocket.start();
+        class Breathing extends Thread
+        {
+            @Override
+            public void run() {
+                while (true) {
+                    Message.obtain(simpleSocket.mHandler, SocketService_to_SimpleSocket, new String("Service lives~_~")).sendToTarget();
+                    try
+                    {
+                        Thread.sleep(10000);
+                    }
+                    catch (Exception e)
+                    {
+                        System.out.println(e);
+                    }
+                }
+            }
+        }
+        Breathing breathing = new Breathing();
+        breathing.start();
     }
 
     @Override

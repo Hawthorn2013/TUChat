@@ -58,6 +58,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         btnClearHistory = (Button)findViewById(R.id.btnClearHistory);
+        btnClearHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendDataBinder.ClearHistory();
+                mainShowText.setText("");
+            }
+        });
         mainTextSend = (Button)findViewById(R.id.MainTextSend);
         mainTextSend.setOnClickListener(new View.OnClickListener() {
             @Override

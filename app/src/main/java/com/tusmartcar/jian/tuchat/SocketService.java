@@ -49,6 +49,7 @@ public class SocketService extends Service {
                         Message.obtain(mainHandler, SocketService.ConnectionStatus_Disconnected).sendToTarget();
                         break;
                 }
+                super.handleMessage(msg);
             }
         };
         simpleSocket = new SimpleSocket(mHandler);
@@ -81,6 +82,20 @@ public class SocketService extends Service {
         public void SendMsg(String sMsg)
         {
             Message.obtain(simpleSocket.mHandler, SocketService_to_SimpleSocket, sMsg).sendToTarget();
+        }
+
+        public void ClearHistory()
+        {
+            try
+            {
+                bufferedWriter.close();
+                bufferedWriter = null;
+                bufferedWriter = new BufferedWriter(new OutputStreamWriter(openFileOutput(getString(R.string.ChatDataTxt), MODE_PRIVATE)));
+            }
+            catch (Exception e)
+            {
+                System.out.println(e);
+            }
         }
 
         public SocketService GetService()

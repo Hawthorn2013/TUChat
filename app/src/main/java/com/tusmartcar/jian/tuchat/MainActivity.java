@@ -69,7 +69,8 @@ public class MainActivity extends AppCompatActivity {
         mainTextSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendDataBinder.SendMsg(new String("I am Nexus 5."));
+                sendDataBinder.SendMsg(mainEditText.getText().toString());
+                mainEditText.setText("");
             }
         });
         svMainShowText = (ScrollView)findViewById(R.id.svMainShowText);

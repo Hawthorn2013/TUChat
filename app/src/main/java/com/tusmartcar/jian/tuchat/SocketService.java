@@ -11,6 +11,8 @@ public class SocketService extends Service {
     public static final int SocketService_to_MainActiviyt = 2;
     public static final int SocketService_to_SimpleSocket = 3;
     public static final int SimpleSocket_to_SocketService = 4;
+    public static final int ConnectionStatus_Disconnected = 5;
+    public static final int ConnectionStatus_Connected = 6;
 
     private SimpleSocket simpleSocket = null;
     public Handler mHandler = null;
@@ -27,6 +29,12 @@ public class SocketService extends Service {
                             Message.obtain(mainHandler, SocketService_to_MainActiviyt, msg.obj).sendToTarget();
                         }
                         super.handleMessage(msg);
+                        break;
+                    case ConnectionStatus_Connected :
+                        Message.obtain(mainHandler, SocketService.ConnectionStatus_Connected).sendToTarget();
+                        break;
+                    case ConnectionStatus_Disconnected :
+                        Message.obtain(mainHandler, SocketService.ConnectionStatus_Disconnected).sendToTarget();
                         break;
                 }
             }

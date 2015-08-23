@@ -56,9 +56,15 @@ public class SimpleSocket extends Thread
                 bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream));
                 InputStream inputStream = socket.getInputStream();
                 bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                Message.obtain(revHandler, SocketService.ConnectionStatus_Connected).sendToTarget();
                 try {
                     while (true) {
                         String inputStr = bufferedReader.readLine();
+                        if (inputStr == null)
+                        {
+                            //很遗憾，服务端已关闭Socket
+                            break;
+                        }
                         Message.obtain(revHandler, SocketService.SimpleSocket_to_SocketService, inputStr).sendToTarget();
                     }
                 } catch (Exception e) {
@@ -67,7 +73,7 @@ public class SimpleSocket extends Thread
             } catch (Exception e) {
                 System.out.println(e);
             }
-
+            Message.obtain(revHandler, SocketService.ConnectionStatus_Disconnected).sendToTarget();
             try {
                 bufferedReader.close();
                 bufferedWriter.close();
@@ -78,6 +84,12 @@ public class SimpleSocket extends Thread
                 bufferedReader = null;
                 bufferedWriter = null;
                 socket = null;
+            }
+            try {
+                Thread.sleep(1000);
+            }
+            catch (Exception e) {
+                System.out.println(e);
             }
         }
     }

@@ -3,6 +3,7 @@ package com.tusmartcar.jian.tuchat;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.*;
 import android.view.Menu;
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private SocketService socketService = null;
     private SocketService.SendDataBinder sendDataBinder = null;
     private ServiceConnection conn = null;
+    private TextView ConnectionStatus = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -37,14 +39,22 @@ public class MainActivity extends AppCompatActivity {
                 sendDataBinder.SendMsg(new String("I am Nexus 5."));
             }
         });
+        ConnectionStatus = (TextView)findViewById(R.id.ConnectionStatus);
         mHandler = new Handler() {
             @Override
             public void handleMessage(Message msg)
             {
                 switch (msg.what) {
                     case SocketService.SocketService_to_MainActiviyt :
-                        mainShowText.setText(mainShowText.getText() + "\n" + (String) (msg.obj));
+                        mainShowText.setText((String)(msg.obj) + "\n" + mainShowText.getText());
                         break;
+                    case SocketService.ConnectionStatus_Connected :
+                        ConnectionStatus.setText("已连接^-^");
+                        ConnectionStatus.setBackgroundColor(Color.GREEN);
+                        break;
+                    case SocketService.ConnectionStatus_Disconnected :
+                        ConnectionStatus.setText("断线重连...");
+                        ConnectionStatus.setBackgroundColor(Color.RED);
                 }
                 super.handleMessage(msg);
             }

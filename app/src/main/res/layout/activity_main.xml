@@ -62,7 +62,11 @@
                     android:text="清除历史"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-                <ImageButton
+                <Button
+                    android:id="@+id/btnTest"
+                    android:background="@drawable/style_icons_system_best_do2"
+                    android:layout_height="40dp"
+                    android:layout_width="40dp"
                     />
             </TableRow>
         </TableLayout>

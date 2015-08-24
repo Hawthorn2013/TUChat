@@ -1,9 +1,16 @@
 package com.tusmartcar.jian.tuchat;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.*;
 import android.view.Menu;
@@ -34,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private CheckBox cbAutoScroll = null;
     private Button btnClearHistory = null;
     private ScrollView svMainShowText = null;
+    private Button btnTest = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -43,6 +51,35 @@ public class MainActivity extends AppCompatActivity {
         mainShowText = (TextView)findViewById(R.id.MainShowText);
         mainEditText = (EditText)findViewById(R.id.MainEditText);
         cbAutoScroll = (CheckBox)findViewById(R.id.cbAutoScroll);
+        btnTest = (Button)findViewById(R.id.btnTest);
+        btnTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bitmap btm = BitmapFactory.decodeResource(getResources(),
+                        R.drawable.style_icons_system_best_do2);
+                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
+                        MainActivity.this).setSmallIcon(R.drawable.style_icons_system_best_do2)
+                        .setContentTitle("5 new message")
+                        .setContentText("twain@android.com");
+                mBuilder.setTicker("New message");//第一次提示消息的时候显示在通知栏上
+                mBuilder.setNumber(12);
+                mBuilder.setLargeIcon(btm);
+                mBuilder.setAutoCancel(true);//自己维护通知的消失
+
+                //构建一个Intent
+                Intent resultIntent = new Intent(MainActivity.this,
+                        MainActivity.class);
+                //封装一个Intent
+                PendingIntent resultPendingIntent = PendingIntent.getActivity(
+                        MainActivity.this, 0, resultIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+                // 设置通知主题的意图
+                mBuilder.setContentIntent(resultPendingIntent);
+                //获取通知管理器对象
+                NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                mNotificationManager.notify(0, mBuilder.build());
+            }
+        });
         cbAutoScroll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -91,6 +128,10 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             });
                         }
+
+
+
+
                         break;
                     case SocketService.ConnectionStatus_Connected :
                         ConnectionStatus.setText("已连接^-^");

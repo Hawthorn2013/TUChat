@@ -55,29 +55,7 @@ public class MainActivity extends AppCompatActivity {
         btnTest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bitmap btm = BitmapFactory.decodeResource(getResources(),
-                        R.drawable.style_icons_system_best_do2);
-                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
-                        MainActivity.this).setSmallIcon(R.drawable.style_icons_system_best_do2)
-                        .setContentTitle("5 new message")
-                        .setContentText("twain@android.com");
-                mBuilder.setTicker("New message");//第一次提示消息的时候显示在通知栏上
-                mBuilder.setNumber(12);
-                mBuilder.setLargeIcon(btm);
-                mBuilder.setAutoCancel(true);//自己维护通知的消失
 
-                //构建一个Intent
-                Intent resultIntent = new Intent(MainActivity.this,
-                        MainActivity.class);
-                //封装一个Intent
-                PendingIntent resultPendingIntent = PendingIntent.getActivity(
-                        MainActivity.this, 0, resultIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT);
-                // 设置通知主题的意图
-                mBuilder.setContentIntent(resultPendingIntent);
-                //获取通知管理器对象
-                NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                mNotificationManager.notify(0, mBuilder.build());
             }
         });
         cbAutoScroll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

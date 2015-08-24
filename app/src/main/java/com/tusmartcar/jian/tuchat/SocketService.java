@@ -1,11 +1,17 @@
 package com.tusmartcar.jian.tuchat;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.*;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.Message;
 import android.content.*;
+import android.support.v4.app.NotificationCompat;
+
 import java.io.*;
 
 public class SocketService extends Service {
@@ -39,6 +45,20 @@ public class SocketService extends Service {
                             {
                                 System.out.println(e);
                             }
+                            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
+                                    SocketService.this).setSmallIcon(R.drawable.style_icons_system_best_do2)
+                                    .setContentTitle("新消息")
+                                    .setContentText(new String(sMsg));
+                            mBuilder.setTicker("New message");//第一次提示消息的时候显示在通知栏上
+                            //构建一个Intent
+                            Intent resultIntent = new Intent(SocketService.this, MainActivity.class);
+                            //封装一个Intent
+                            PendingIntent resultPendingIntent = PendingIntent.getActivity(SocketService.this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                            // 设置通知主题的意图
+                            mBuilder.setContentIntent(resultPendingIntent);
+                            //获取通知管理器对象
+                            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                            mNotificationManager.notify(0, mBuilder.build());
                         }
                         super.handleMessage(msg);
                         break;

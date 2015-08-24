@@ -31,13 +31,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView mainShowText = null;
     private EditText mainEditText = null;
     private Button mainTextSend = null;
-    private SimpleSocket simpleSocket = null;
     private Handler mHandler = null;
-    private SocketService socketService = null;
-    private SocketService.SendDataBinder sendDataBinder = null;
+    private ServiceCommunicate.Cmd sendDataBinder = null;
     private ServiceConnection conn = null;
     private TextView ConnectionStatus = null;
-    private BufferedReader bufferedReader = null;
     private CheckBox cbAutoScroll = null;
     private Button btnClearHistory = null;
     private ScrollView svMainShowText = null;
@@ -55,14 +52,13 @@ public class MainActivity extends AppCompatActivity {
         btnTest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                sendDataBinder.sendCmd(ServiceCommunicate.Cmd_Get_History);
             }
         });
         cbAutoScroll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked)
-                {
+                if (isChecked) {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -76,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         btnClearHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendDataBinder.ClearHistory();
+                sendDataBinder.sendCmd(ServiceCommunicate.Cmd_Clear_History);
                 mainShowText.setText("");
             }
         });
@@ -84,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         mainTextSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendDataBinder.SendMsg(mainEditText.getText().toString());
+                sendDataBinder.sendMsg(mainEditText.getText().toString());
                 mainEditText.setText("");
             }
         });
@@ -96,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
             public void handleMessage(Message msg)
             {
                 switch (msg.what) {
-                    case SocketService.SocketService_to_MainActiviyt :
+                    case ServiceCommunicate.Rev_New_Msg :
                         mainShowText.setText(mainShowText.getText() + System.getProperty("line.separator") + (String)(msg.obj));
                         if (cbAutoScroll.isChecked()) {
                             mHandler.post(new Runnable() {
@@ -106,18 +102,20 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             });
                         }
-
-
-
-
                         break;
-                    case SocketService.ConnectionStatus_Connected :
-                        ConnectionStatus.setText("已连接^-^");
-                        ConnectionStatus.setBackgroundColor(Color.GREEN);
+                    case ServiceCommunicate.Rev_Conn_Status :
+                        if ((boolean)msg.obj) {
+                            ConnectionStatus.setText("已连接^-^");
+                            ConnectionStatus.setBackgroundColor(Color.GREEN);
+                        }
+                        else {
+                            ConnectionStatus.setText("断线重连...");
+                            ConnectionStatus.setBackgroundColor(Color.RED);
+                        }
                         break;
-                    case SocketService.ConnectionStatus_Disconnected :
-                        ConnectionStatus.setText("断线重连...");
-                        ConnectionStatus.setBackgroundColor(Color.RED);
+                    case ServiceCommunicate.Rev_History_Data :
+                        mainShowText.setText(new String((String)msg.obj) + System.getProperty("line.separator"));
+                        break;
                 }
                 super.handleMessage(msg);
             }
@@ -127,9 +125,10 @@ public class MainActivity extends AppCompatActivity {
         conn = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-                sendDataBinder = (SocketService.SendDataBinder)service;
-                sendDataBinder.SetMainHandler(mHandler);
-                sendDataBinder.SendMsg(new String("Service Start"));
+                sendDataBinder = (ServiceCommunicate.Cmd)service;
+                sendDataBinder.setRevHandler(mHandler);
+                sendDataBinder.sendMsg(new String("Service Start"));
+                sendDataBinder.sendCmd(ServiceCommunicate.Cmd_Get_History);
             }
 
             @Override
@@ -138,29 +137,6 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         bindService(intent, conn, BIND_AUTO_CREATE);
-
-        //显示历史消息
-        try
-        {
-            bufferedReader = new BufferedReader(new InputStreamReader(openFileInput(getString(R.string.ChatDataTxt))));
-            String s = null;
-            while ((s = bufferedReader.readLine()) != null)
-            {
-                mainShowText.setText(mainShowText.getText() + System.getProperty("line.separator") + s);
-            }
-        }
-        catch (Exception e)
-        {
-            System.out.println(e);
-        }
-        finally {
-            try {
-                bufferedReader.close();
-            }
-            catch (Exception e) {
-                System.out.println(e);
-            }
-        }
     }
 
     @Override
